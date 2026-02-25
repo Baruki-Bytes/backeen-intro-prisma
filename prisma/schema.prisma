@@ -1,0 +1,40 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url     = env("DATABASE_URL")
+}
+
+enum Role{
+  USER
+  ADMIN
+}
+
+// comando $npx prisma db push --- cria tabela poggers
+// comando $npx prisma pull
+// comando $npx prisma migrate dev --name init create table user 
+model User{
+  id Int @id @default(autoincrement())
+  status Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  role Role @default(USER)
+  name String
+  email String @unique
+  post Post[]
+
+  @@map("users")
+}
+
+model Post{
+  id Int @id @default(autoincrement())
+  title String
+  subtitle String
+  userId Int  @map("user_id")
+  user User @relation(fields: [userId], references: [id])
+
+@@map("posts")
+}
